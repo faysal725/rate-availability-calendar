@@ -65,6 +65,14 @@ export default function Page() {
   const mainGridContainerRef = useRef<HTMLDivElement | null>(null);
   const InventoryRefs = useRef<Array<RefObject<VariableSizeGrid>>>([]);
 
+  const [cursor, setCursor] = useState<number>(0); //state of cursor to manage
+
+  // load more item 
+  const loadNextPage = () => {
+    setCursor((prevCursor) => prevCursor + 1); // Increment the cursor by 1
+    console.log('working')
+  };
+
   // Handle horizontal scroll for dates
   const handleDatesScroll = useCallback(({ scrollLeft }: GridOnScrollProps) => {
     InventoryRefs.current.forEach((ref) => {
@@ -163,6 +171,7 @@ export default function Page() {
       ? watchedDateRange[1]
       : watchedDateRange[0]!.add(2, "month")
     ).format("YYYY-MM-DD"),
+    cursor: cursor
   });
 
   // Component to render each month row in the calendar
@@ -230,6 +239,7 @@ export default function Page() {
     <Container sx={{ backgroundColor: "#EEF2F6" }}>
       <Navbar />
       <Box>
+        {/* <button onClick={() => loadNextPage()}>Load more {cursor}</button> */}
         <Card elevation={1} sx={{ padding: 4, mt: 4 }}>
           <Grid container columnSpacing={2}>
             <Grid size={12}>

@@ -47,6 +47,7 @@ interface IParams {
   property_id: number;
   start_date: string;
   end_date: string;
+  cursor:number
 }
 
 interface IResponse {
@@ -55,7 +56,7 @@ interface IResponse {
 }
 
 // Custom hook to fetch room rate availability calendar data
-export default function useRoomRateAvailabilityCalendar(params: IParams) {
+export default function useRoomRateAvailabilityCalendar(params: IParams ) {
   // Construct the URL with query parameters
   const url = new URL(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/property/${params.property_id}/rate-calendar/assessment`
@@ -64,7 +65,7 @@ export default function useRoomRateAvailabilityCalendar(params: IParams) {
   url.search = new URLSearchParams({
     start_date: params.start_date,
     end_date: params.end_date,
-    // cursor: "0", // for infinite scroll
+    cursor: params.cursor?.toString() || "0", // for infinite scroll
   }).toString();
 
   // Use React Query's useQuery hook to fetch data
