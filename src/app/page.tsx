@@ -39,6 +39,7 @@ import { countDaysByMonth } from "@/utils";
 import RoomRateAvailabilityCalendar from "./(components)/RoomCalendar";
 import Navbar from "@/components/Navbar";
 import useRoomRateAvailabilityCalendar from "./(hooks)/useRoomRateAvailabilityCalendar";
+import { useInView } from "react-intersection-observer";
 
 // Define the form type for the date range picker
 export type CalendarForm = {
@@ -67,6 +68,10 @@ export default function Page() {
   const InventoryRefs = useRef<Array<RefObject<VariableSizeGrid>>>([]);
 
   const [cursor, setCursor] = useState<number>(0); //state of cursor to manage
+
+  // handle infinite scrolling
+
+  const { ref, inView } = useInView(0);
 
   // load more item
   const loadNextPage = () => {
@@ -178,8 +183,10 @@ export default function Page() {
   });
 
   useEffect(() => {
-    console.log(room_calendar?.data);
-  }, [room_calendar]);
+    if (inView) {
+      room_calendar.fetchNextPage();
+    }
+  }, [room_calendar.fetchNextPage, inView]);
 
   // Component to render each month row in the calendar
   const MonthRow: React.FC<ListChildComponentProps> = memo(function MonthRowFC({
@@ -372,8 +379,8 @@ export default function Page() {
               </AutoSizer>
             </Grid>
           </Grid>
-          {room_calendar.isFetchingNextPage ? 'true': 'false'}
-          {room_calendar.isFetching ? 'true': 'false'}
+          {room_calendar.isFetchingNextPage ? "true" : "false"}
+          {room_calendar.isFetching ? "true" : "false"}
           {room_calendar.isSuccess
             ? room_calendar.data?.pages?.map((page, index) => (
                 <Fragment key={index}>
@@ -392,6 +399,23 @@ export default function Page() {
                 </Fragment>
               ))
             : null}
+
+          <div ref={ref}>
+            {room_calendar.isFetching && room_calendar.isFetchingNextPage ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            ) : (
+              ""
+            )}
+          </div>
 
           {room_calendar.isLoading && (
             <Box
