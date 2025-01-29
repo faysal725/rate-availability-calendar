@@ -69,13 +69,20 @@ export default function Page() {
 
 
   // handle infinite scrolling
+  const [isNextPageLoading, setIsNextPageLoading] = useState(false)
 
   const { ref, inView } = useInView(0);
 
   // load more item
-  const loadNextPage = () => {
+  const loadNextPage = async () => {
     const { hasNextPage, isFetchingNextPage, isFetching } = room_calendar;
-    room_calendar.fetchNextPage();
+    if (hasNextPage) {
+      await room_calendar.fetchNextPage();
+      await setIsNextPageLoading(false)
+    }else{
+      
+       setIsNextPageLoading(false)
+    }
   };
 
   // Handle horizontal scroll for dates
@@ -181,6 +188,8 @@ export default function Page() {
   // fetching next page 
   useEffect(() => {
     if (inView) {
+    
+      setIsNextPageLoading(true)
       room_calendar.fetchNextPage();
     }
   }, [room_calendar.fetchNextPage, inView]);
@@ -394,8 +403,9 @@ export default function Page() {
               ))
             : null}
 
+            
           <div ref={ref}>
-            {room_calendar.isFetching && room_calendar.isFetchingNextPage ? (
+            {isNextPageLoading ? (
               <Box
                 sx={{
                   display: "flex",
