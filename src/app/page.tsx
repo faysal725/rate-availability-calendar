@@ -67,7 +67,6 @@ export default function Page() {
   const mainGridContainerRef = useRef<HTMLDivElement | null>(null);
   const InventoryRefs = useRef<Array<RefObject<VariableSizeGrid>>>([]);
 
-  const [cursor, setCursor] = useState<number>(0); //state of cursor to manage
 
   // handle infinite scrolling
 
@@ -75,11 +74,8 @@ export default function Page() {
 
   // load more item
   const loadNextPage = () => {
-    // setCursor((prevCursor) => prevCursor + 1); // Increment the cursor by 1
     const { hasNextPage, isFetchingNextPage, isFetching } = room_calendar;
-    console.log(hasNextPage, isFetching, isFetchingNextPage);
     room_calendar.fetchNextPage();
-    console.log(hasNextPage, isFetching, isFetchingNextPage);
   };
 
   // Handle horizontal scroll for dates
@@ -182,6 +178,7 @@ export default function Page() {
     ).format("YYYY-MM-DD"),
   });
 
+  // fetching next page 
   useEffect(() => {
     if (inView) {
       room_calendar.fetchNextPage();
@@ -253,7 +250,6 @@ export default function Page() {
     <Container sx={{ backgroundColor: "#EEF2F6" }}>
       <Navbar />
       <Box>
-        <button onClick={() => loadNextPage()}>Load more {cursor}</button>
         <Card elevation={1} sx={{ padding: 4, mt: 4 }}>
           <Grid container columnSpacing={2}>
             <Grid size={12}>
@@ -379,8 +375,6 @@ export default function Page() {
               </AutoSizer>
             </Grid>
           </Grid>
-          {room_calendar.isFetchingNextPage ? "true" : "false"}
-          {room_calendar.isFetching ? "true" : "false"}
           {room_calendar.isSuccess
             ? room_calendar.data?.pages?.map((page, index) => (
                 <Fragment key={index}>
