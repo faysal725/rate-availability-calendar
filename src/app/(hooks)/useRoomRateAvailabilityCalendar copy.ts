@@ -1,6 +1,6 @@
 // Import necessary modules and types
 import Fetch from "@/utils/Fetch";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Dayjs } from "dayjs";
 
 // ToDo: Add infinite query support
@@ -47,6 +47,7 @@ interface IParams {
   property_id: number;
   start_date: string;
   end_date: string;
+  cursor:number
 }
 
 interface IResponse {
@@ -61,28 +62,19 @@ export default function useRoomRateAvailabilityCalendar(params: IParams ) {
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/property/${params.property_id}/rate-calendar/assessment`
   );
 
-
-
-  const fetchProjects = async ({ pageParam = 0 }) => {
-    url.search = new URLSearchParams({
-      start_date: params.start_date,
-      end_date: params.end_date,
-      cursor: pageParam, // for infinite scroll
-    }).toString();
-    
-    const res = await Fetch<IResponse>({
-      method: "GET",
-      url,
-    })
-    console.log(res)
-    return res
-
-  }
+  url.search = new URLSearchParams({
+    start_date: params.start_date,
+    end_date: params.end_date,
+    cursor: params.cursor?.toString() || "0", // for infinite scroll
+  }).toString();
 
   // Use React Query's useQuery hook to fetch data
-  return useInfiniteQuery<IResponse>({
+  return useQuery({
     queryKey: ["property_room_calendar", params], // Unique query key
-    queryFn: fetchProjects, // Fetch data from the API
-    getNextPageParam: (lastPage, pages) => lastPage.data.nextCursor,
+    queryFn: async () =>
+      await Fetch<IResponse>({
+        method: "GET",
+        url,
+      }), // Fetch data from the API
   });
 }

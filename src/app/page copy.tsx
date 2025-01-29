@@ -15,7 +15,6 @@ import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
 import { Controller, useForm } from "react-hook-form";
 import {
-  Fragment,
   RefObject,
   memo,
   useCallback,
@@ -68,13 +67,10 @@ export default function Page() {
 
   const [cursor, setCursor] = useState<number>(0); //state of cursor to manage
 
-  // load more item
+  // load more item 
   const loadNextPage = () => {
-    // setCursor((prevCursor) => prevCursor + 1); // Increment the cursor by 1
-    const { hasNextPage, isFetchingNextPage, isFetching } = room_calendar;
-    console.log(hasNextPage, isFetching, isFetchingNextPage);
-    room_calendar.fetchNextPage();
-    console.log(hasNextPage, isFetching, isFetchingNextPage);
+    setCursor((prevCursor) => prevCursor + 1); // Increment the cursor by 1
+    console.log('working')
   };
 
   // Handle horizontal scroll for dates
@@ -175,10 +171,11 @@ export default function Page() {
       ? watchedDateRange[1]
       : watchedDateRange[0]!.add(2, "month")
     ).format("YYYY-MM-DD"),
+    cursor: cursor
   });
 
   useEffect(() => {
-    console.log(room_calendar?.data);
+    console.log(room_calendar?.data?.pages[0]?.room_categories)
   }, [room_calendar]);
 
   // Component to render each month row in the calendar
@@ -372,27 +369,23 @@ export default function Page() {
               </AutoSizer>
             </Grid>
           </Grid>
-          {room_calendar.isFetchingNextPage ? 'true': 'false'}
-          {room_calendar.isFetching ? 'true': 'false'}
-          {room_calendar.isSuccess
-            ? room_calendar.data?.pages?.map((page, index) => (
-                <Fragment key={index}>
-                  {page.data.room_categories.map((room_category, key) => (
-                    <RoomRateAvailabilityCalendar
-                      key={key}
-                      index={key}
-                      InventoryRefs={InventoryRefs}
-                      isLastElement={
-                        key === page.data.room_categories.length - 1
-                      }
-                      room_category={room_category}
-                      handleCalenderScroll={handleCalenderScroll}
-                    />
-                  ))}
-                </Fragment>
-              ))
-            : null}
 
+          {room_calendar.isSuccess
+            ? room_calendar.data?.data?.room_categories.map(
+                (room_category, key) => (
+                  <RoomRateAvailabilityCalendar
+                    key={key}
+                    index={key}
+                    InventoryRefs={InventoryRefs}
+                    isLastElement={
+                      key === room_calendar.data.data.room_categories.length - 1
+                    }
+                    room_category={room_category}
+                    handleCalenderScroll={handleCalenderScroll}
+                  />
+                )
+              )
+            : null}
           {room_calendar.isLoading && (
             <Box
               sx={{
