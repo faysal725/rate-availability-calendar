@@ -63,11 +63,11 @@ export default function useRoomRateAvailabilityCalendar(params: IParams ) {
 
 
 
-  const fetchProjects = async ({ pageParam = 0 }) => {
+  const fetchProjects = async ({ pageParam = "0" }) => {
     url.search = new URLSearchParams({
       start_date: params.start_date,
       end_date: params.end_date,
-      cursor: pageParam, // for infinite scroll
+      cursor: pageParam.toString(), // for infinite scroll
     }).toString();
     
     const res = await Fetch<IResponse>({
