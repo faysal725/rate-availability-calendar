@@ -1,6 +1,6 @@
 // Import necessary modules and types
 import Fetch from "@/utils/Fetch";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Dayjs } from "dayjs";
 
 // ToDo: Add infinite query support
