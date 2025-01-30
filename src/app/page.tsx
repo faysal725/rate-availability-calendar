@@ -70,20 +70,8 @@ export default function Page() {
 
   // handle infinite scrolling
   const [isNextPageLoading, setIsNextPageLoading] = useState(false)
-
   const { ref, inView } = useInView(0);
 
-  // load more item
-  const loadNextPage = async () => {
-    const { hasNextPage, isFetchingNextPage, isFetching } = room_calendar;
-    if (hasNextPage) {
-      await room_calendar.fetchNextPage();
-      await setIsNextPageLoading(false)
-    }else{
-      
-       setIsNextPageLoading(false)
-    }
-  };
 
   // Handle horizontal scroll for dates
   const handleDatesScroll = useCallback(({ scrollLeft }: GridOnScrollProps) => {
