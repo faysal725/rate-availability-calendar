@@ -83,6 +83,6 @@ export default function useRoomRateAvailabilityCalendar(params: IParams ) {
   return useInfiniteQuery<IResponse>({
     queryKey: ["property_room_calendar", params], // Unique query key
     queryFn: fetchProjects, // Fetch data from the API
-    getNextPageParam: (lastPage, pages) => lastPage.data.nextCursor,
+    getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });
 }
